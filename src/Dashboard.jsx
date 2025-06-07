@@ -4,7 +4,7 @@ const Dashboard = () => {
   const [studentData, setStudentData] = useState(null);
   const [qrCodeInput, setQrCodeInput] = useState("");
 
-  // Simulated database
+  
   const students = [
     {
       name: "Yeabsera Abebe",
