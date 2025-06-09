@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { Html5Qrcode } from "html5-qrcode";
 
 const Dashboard = () => {
   const [studentData, setStudentData] = useState(null);
   const [qrCodeInput, setQrCodeInput] = useState("");
+  const fileInputRef = useRef(null);
 
-  
   const students = [
     {
       name: "Yeabsera Abebe",
@@ -59,15 +60,53 @@ const Dashboard = () => {
     }
   };
 
+  const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const html5QrCode = new Html5Qrcode("qr-reader");
+
+  // Map QR code URLs to student PC serials
+  const qrMap = {
+    "https://qrco.de/bg42Rz": "Yeab12345",
+    "https://qrco.de/bg42Wj": "Tsedi12345",
+    "https://qrco.de/bg42ic": "YoniD12345",
+  };
+
+  try {
+    const result = await html5QrCode.scanFile(file, true);
+    console.log("Scanned QR content:", result);
+
+    const cleanedResult = result.trim();
+    const serialFromMap = qrMap[cleanedResult] || cleanedResult;
+
+    const matched = students.find(
+      (s) => s.pcSerial.toLowerCase() === serialFromMap.toLowerCase()
+    );
+
+    if (matched) {
+      setStudentData(matched);
+    } else {
+      setStudentData(null);
+      alert(`No student found for scanned QR content: ${cleanedResult}`);
+    }
+  } catch (err) {
+    console.error("QR scanning failed", err);
+    alert("QR Code could not be read.");
+  }
+};
+
+
   return (
     <div className="container py-5">
-      <h1 className="text-center mb-5">
+      <h1 className="text-center mb-4">
         Smart Anti-Theft and Identification System for PC
       </h1>
 
+      {/* PC Serial Input Method */}
       <div className="card mb-4">
         <div className="card-body">
-          <h5 className="card-title mb-3">Scan QR Code</h5>
+          <h5 className="card-title mb-3">Manual Serial Number Input</h5>
           <div className="input-group">
             <input
               type="text"
@@ -77,12 +116,28 @@ const Dashboard = () => {
               onChange={(e) => setQrCodeInput(e.target.value)}
             />
             <button className="btn btn-primary" onClick={handleScan}>
-              Scan
+              Check
             </button>
           </div>
         </div>
       </div>
 
+      {/* QR Code Image Upload */}
+      <div className="card mb-4">
+        <div className="card-body">
+          <h5 className="card-title mb-3">Upload QR Code Image</h5>
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="form-control"
+          />
+          <div id="qr-reader" style={{ display: "none" }}></div>
+        </div>
+      </div>
+
+      {/* Student Info */}
       {studentData && (
         <div className="card">
           <div className="card-body">

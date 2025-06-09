@@ -12,6 +12,7 @@
   "dependencies": {
     "bootstrap": "^5.3.6",
     "daisyui": "^5.0.43",
+    "html5-qrcode": "^2.3.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
