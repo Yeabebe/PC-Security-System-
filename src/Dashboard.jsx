@@ -136,6 +136,20 @@ const Dashboard = () => {
           <div id="qr-reader" style={{ display: "none" }}></div>
         </div>
       </div>
+      <div className="d-flex justify-content-center mt-4">
+  <button
+    className="btn btn-danger"
+    onClick={() => {
+      setQrCodeInput("");
+      setStudentData(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+    }}
+  >
+    Cancel
+  </button>
+</div>
 
       {/* Student Info */}
       {studentData && (
